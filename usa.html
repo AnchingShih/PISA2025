@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PISA 2025 美國學生圖像</title>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PISA 2025: A Portrait of US Students</title>
 <style>
 :root { color-scheme: light; --font-anthropic-sans: "Noto Sans TC", "PingFang TC", "Helvetica Neue", Arial, sans-serif; --font-anthropic-serif: "Noto Serif TC", "Songti TC", Georgia, serif;
   --color-bg: #f7f6f2; --color-fg: #1f1f1d; --color-fg-muted: #6f6e68; --color-panel: #ffffff; --color-border-line: #e1dfd8; --color-ok: #2e7d32; --color-warn: #b26a00; --color-bad: #c62828;
@@ -799,7 +799,7 @@ dash.calc('pair_sig', {
   document.querySelectorAll('.pz .eyebrow').forEach((e) => e.style.setProperty('--sw', colors[0]));
   dash.onData(() => {
     const {domain, cmp: cmpRaw, tab} = P(); const level = tab === 'tw' ? P().level : '全部'; const cmp = tab === 'intl' ? cmpRaw : '';
-    el('btn-lang').textContent = lang() === 'en' ? '中文' : 'English'; document.documentElement.lang = lang() === 'en' ? 'en' : 'zh-Hant';
+    el('btn-lang').textContent = lang() === 'en' ? '中文' : 'English'; document.documentElement.lang = lang() === 'en' ? 'en' : 'zh-Hant'; document.title = lang() === 'en' ? 'PISA 2025: A Portrait of US Students' : 'PISA 2025 美國學生圖像';
     showTab(tab); el('f-level').hidden = tab !== 'tw'; el('f-area').hidden = tab !== 'tw'; el('f-sig').hidden = tab !== 'tw'; el('f-cmp').hidden = tab !== 'intl'; el('f-domain').hidden = tab === 'trend'; el('tiles').hidden = tab === 'trend';
     if (selS !== document.activeElement) selS.value = P().holm ? 'holm' : P().sig ? 'on' : 'off';
     el('hint').textContent = tab === 'trend' ? '美國 2006 到 2025 七輪 PISA 的 15 歲學生，背景與素養表現的世代變化。' : tab === 'tw' ? '只看美國學生，基準是美國全體；四張磚是素養表現分布，點磚切換領域。' : '美國全體對 90 個國家／經濟體，基準是 OECD 平均；可選一個對照國家。';
