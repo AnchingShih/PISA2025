@@ -580,6 +580,7 @@ window.dash = (() => {
 /* Shared helpers and state */
 window.PZ = (() => {
   const LANG0 = 'en';   // default language: English (switch to Chinese at the top right)
+  const SHOW_TREND = false;   // Trends over time tab: hidden at the request of 2026-10-31; set to true to show it again (data and code are kept)
   const lang = () => { const l = dash.params().lang; return l === 'en' || l === 'zh' ? l : LANG0; };
   const Z = (en, zh) => (lang() === 'zh' ? zh : en);   // the English or the Chinese version of a text
   const byLang = (en, zh) => new Proxy(en, {get: (t, k) => (lang() === 'zh' ? zh : en)[k]});
@@ -594,7 +595,7 @@ window.PZ = (() => {
   const rows = (id) => { const r = dash.data(id); return r.status === 'ok' ? r.data : null; };
   const el = (id) => document.getElementById(id);
   const colors = dash.colors;
-  const P = () => { const p = dash.params(); return {domain: DOMS.includes(p.domain) || p.domain === 'ALL' ? p.domain : 'SCIE', level: LEVELS_ALL.includes(p.level) ? p.level : 'All', cmp: typeof p.cmp === 'string' ? p.cmp : '', tab: p.tab === 'intl' ? 'intl' : p.tab === 'trend' ? 'trend' : 'tw', sig: p.sig === 'on' || p.sig === 'holm', holm: p.sig === 'holm'}; };
+  const P = () => { const p = dash.params(); return {domain: DOMS.includes(p.domain) || p.domain === 'ALL' ? p.domain : 'SCIE', level: LEVELS_ALL.includes(p.level) ? p.level : 'All', cmp: typeof p.cmp === 'string' ? p.cmp : '', tab: p.tab === 'intl' ? 'intl' : p.tab === 'trend' && SHOW_TREND ? 'trend' : 'tw', sig: p.sig === 'on' || p.sig === 'holm', holm: p.sig === 'holm'}; };
   const onHiddenPage = (node) => { const pg = node.closest('.page'); return !!(pg && pg.hidden); };
   const svgIn = (node, h) => { if (onHiddenPage(node)) { return {svg: d3.create('svg'), w: 300, h, skipped: true}; } const w = Math.max(240, node.clientWidth || 300); node.replaceChildren(); node.style.minHeight = h + 'px'; const svg = d3.select(node).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img'); return {svg, w, h}; };
   const labelW = (svg, labels) => { const ws = labels.map((s) => { const t = svg.append('text').attr('class', 'strong').text(tx(s)); const ww = t.node().getComputedTextLength ? t.node().getComputedTextLength() : 0; t.remove(); return ww || String(s).length * 11; }); return Math.max(...ws); };
@@ -658,7 +659,7 @@ window.PZ = (() => {
   const T = {mz: (d) => `${DOM[d]}平均素養表現`, me: (d) => (d === 'ALL' ? 'mean performance in each domain' : `mean ${DENG[d]} performance`),
     lz: (lv) => (lv === 'All' ? '' : tx(lv) + '：'), le: (lv) => (lv === 'All' ? '' : ` (${lv})`), cap: (x) => x.charAt(0).toUpperCase() + x.slice(1),
     set: (id, zh, en) => { el(id).textContent = lang() === 'zh' ? zh : en; }};
-  return {T, Z, LEVELS_ALL, AREAS, isArea, pctTip, REG, INC, GRP, grpFilter, fillScope, DOM, DOMS, LEVELS, N, f1, f0, fs, fs0, rows, el, colors, P, svgIn, tip, esc, swatch, legend, cleanAxis, mk, skel, cname, zhName, mix, strongIf, labelW, onHiddenPage, catColor, pairOf, fmtP, planBrackets, drawBrackets, BR, boxedText, eachDomain, lang, tx, txHtml};
+  return {T, Z, SHOW_TREND, LEVELS_ALL, AREAS, isArea, pctTip, REG, INC, GRP, grpFilter, fillScope, DOM, DOMS, LEVELS, N, f1, f0, fs, fs0, rows, el, colors, P, svgIn, tip, esc, swatch, legend, cleanAxis, mk, skel, cname, zhName, mix, strongIf, labelW, onHiddenPage, catColor, pairOf, fmtP, planBrackets, drawBrackets, BR, boxedText, eachDomain, lang, tx, txHtml};
 })();
 </script>
 
@@ -795,6 +796,7 @@ dash.calc('pair_sig', {
   el('btn-reset').addEventListener('click', () => { const tab = P().tab, lg = dash.params().lang; dash.resetParams(); dash.setParams({tab, lang: lg || null}); });
   el('btn-lang').addEventListener('click', () => dash.setParams({lang: lang() === 'en' ? 'zh' : 'en'}));
   const TABS = ['tw', 'intl', 'trend'];
+  el('tabbtn-trend').hidden = !window.PZ.SHOW_TREND;   // hidden tab: its page is never shown (P() maps tab=trend to tw)
   const showTab = (tab) => { TABS.forEach((k) => { el(`tab-${k}`).hidden = k !== tab; el(`tabbtn-${k}`).setAttribute('aria-selected', String(k === tab)); }); };
   TABS.forEach((k) => el(`tabbtn-${k}`).addEventListener('click', () => { showTab(k); dash.setLink(`tab-${k}`); dash.setParams({tab: k}); }));
   document.querySelectorAll('.pz .eyebrow').forEach((e) => e.style.setProperty('--sw', colors[0]));
